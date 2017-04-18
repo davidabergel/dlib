@@ -1,6 +1,8 @@
 #include "./d_gsloutput.h"
 
-void print_gsl_complex( gsl_complex z, int precision, double zerocut )
+using namespace dlib;
+
+void dlib::print_gsl_complex( gsl_complex z, int precision, double zerocut )
 {
 	std::ios state(NULL);
 	state.copyfmt(std::cout);
