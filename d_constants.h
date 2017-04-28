@@ -17,8 +17,10 @@ namespace dlib
 	const double dc_kB = GSL_CONST_MKSA_BOLTZMANN;
 	const double dc_me = GSL_CONST_MKSA_MASS_ELECTRON;
 
-	const gsl_complex GSL_COMPLEX_I = gsl_complex_rect(0.0,1.0) ;
-	const gsl_complex GSL_COMPLEX_NEGI = gsl_complex_rect(0.0,-1.0) ;
+	const gsl_complex gslc_I = gsl_complex_rect(0.0,1.0);
+	const gsl_complex gslc_negI = gsl_complex_rect(0.0,-1.0);
+	const gsl_complex gslc_one = gsl_complex_rect(1.0,0.0);
+	const gsl_complex gslc_negone = gsl_complex_rect(-1.0,0.0);
 }
 
 #endif
