@@ -14,7 +14,7 @@ int main()
 
 	dIntParams dip = { 0.0, 1.0, 1001 };
 
-	dIntegrator inter;
+	dIntegrator inter = dIntegrator();
 	double intres = inter.Simpson( &testintegrand, NULL, &dip );
 
 	const double mapleres= 0.2166666667;

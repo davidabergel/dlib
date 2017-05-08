@@ -27,3 +27,7 @@ clean :
 		if [ -e $$stub ] ; then rm -v $$stub ; fi ; \
 	done
 	@if [ -e libd_functions.a ] ; then rm -v ./libd_functions.a ; fi
+	@if [ -e testing ] ; then rm -v ./testing ; fi
+
+testing : testing.cpp ${OBJECTS}
+	g++ -o testing testing.cpp ${OBJECTS} -lgsl -lgslcblas
