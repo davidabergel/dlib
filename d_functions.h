@@ -28,6 +28,9 @@ namespace dlib
 		public :
 			dIntegrator() {}
 
+			double Trapezoid(
+					double (*f)(double,void*), void *params,
+					dlib::dIntParams *ip );
 			double Simpson( 
 					double (*f)(double,void*), void *params, 
 					dlib::dIntParams *ip );

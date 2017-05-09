@@ -37,6 +37,26 @@ gsl_complex dlib::gslc_prod( gsl_complex a, gsl_complex b, gsl_complex c,
 	return gsl_complex_mul( gsl_complex_mul(a,b), gsl_complex_mul(c,d) );
 }
 
+double dlib::dIntegrator::Trapezoid(
+		double (*f)(double,void*), void *params, dlib::dIntParams *ip )
+{
+	double *ig = new double[ip->xpts];
+	double xstep = dlib::stepsize( ip->xmin, ip->xmax, ip->xpts );
+
+	for( int jj=0; jj< ip->xpts-1; jj++ )
+	{
+		double thisx = ip->xmin + (double)jj*xstep;
+		ig[jj] = f(thisx,params);
+	}
+
+	double intsum = 0.5*( ig[0] + ig[ip->xpts-1] );
+	for( int jj=1; jj<ip->xpts-1; jj++ )
+		intsum += ig[jj];
+
+	delete[] ig;
+	return xstep*intsum;
+}
+
 double dlib::dIntegrator::Simpson( 
 		double (*f)(double,void*), void *params, dlib::dIntParams *ip )
 {

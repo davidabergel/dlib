@@ -12,21 +12,22 @@ int main()
 {
 	cout << "Running testing..." << endl;
 
-	dIntParams dip = { 0.0, 1.0, 1001 };
+	dIntParams dip = { 0.0, M_PI, 11 };
 
 	dIntegrator inter = dIntegrator();
-	double intres = inter.Simpson( &testintegrand, NULL, &dip );
+	double intTrap = inter.Trapezoid( &testintegrand, NULL, &dip );
+	double intSimp = inter.Simpson( &testintegrand, NULL, &dip );
 
-	const double mapleres= 0.2166666667;
-	cout << "Got intres = " << intres 
-		<< "   intres-maplere = " << intres-mapleres
-		<< endl;
+	const double mapleres= 0.0;
+	cout << "Got intTrap = " << intTrap << "  (error " << intTrap-mapleres 
+		<< ")   intSimp = " << intSimp << "  (error " << intSimp-mapleres
+		<< ")" << endl;
 
 	return 0;
 }
 
 double testintegrand( double x, void * )
 {
-	return 0.1*pow(x,5) + 0.8*pow(x,3);
+	return cos(x) + cos(3*x) + cos(5*x) + cos(6*x);
 }
 
