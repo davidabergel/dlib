@@ -12,13 +12,18 @@ int main()
 {
 	cout << "Running testing..." << endl;
 
-	dIntParams dip = { 0.0, M_PI, 11 };
+	dIntParams dip = { 0.2, M_PI+0.2, 11 };
 
 	dIntegrator inter = dIntegrator();
+	cout << "Trapezoid:" << endl;
 	double intTrap = inter.Trapezoid( &testintegrand, NULL, &dip );
+	cout << endl;
+	cout << "Simpson:";
 	double intSimp = inter.Simpson( &testintegrand, NULL, &dip );
+	cout << endl;
 
-	const double mapleres= 0.0;
+	//const double mapleres= M_PI*0.5;
+	const double mapleres= 1.173457665;
 	cout << "Got intTrap = " << intTrap << "  (error " << intTrap-mapleres 
 		<< ")   intSimp = " << intSimp << "  (error " << intSimp-mapleres
 		<< ")" << endl;
@@ -28,6 +33,7 @@ int main()
 
 double testintegrand( double x, void * )
 {
-	return cos(x) + cos(3*x) + cos(5*x) + cos(6*x);
+	cout << "  testintegrand(" << x << ")" << endl;
+	return cos(x) - sin(2*x) + cos(3*x)*cos(3*x) - sin(6*x);
 }
 

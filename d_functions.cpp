@@ -43,6 +43,7 @@ double dlib::dIntegrator::Trapezoid(
 	double *ig = new double[ip->xpts];
 	double xstep = dlib::stepsize( ip->xmin, ip->xmax, ip->xpts );
 
+#pragma omp parallel for schedule(dynamic)
 	for( int jj=0; jj< ip->xpts-1; jj++ )
 	{
 		double thisx = ip->xmin + (double)jj*xstep;
@@ -70,6 +71,7 @@ double dlib::dIntegrator::Simpson(
 	double *ig = new double[ip->xpts];
 	double xstep = dlib::stepsize( ip->xmin, ip->xmax, ip->xpts );
 
+#pragma omp parallel for schedule(dynamic)
 	for( int jj=0; jj<ip->xpts; jj++ )
 	{
 		double thisx = ip->xmin + (double)jj*xstep;
