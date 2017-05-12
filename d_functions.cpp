@@ -37,6 +37,20 @@ gsl_complex dlib::gslc_prod( gsl_complex a, gsl_complex b, gsl_complex c,
 	return gsl_complex_mul( gsl_complex_mul(a,b), gsl_complex_mul(c,d) );
 }
 
+dlib::TwoDVector::TwoDVector( double x, double y ) : _x(x), _y(y) {}
+
+double dlib::TwoDVector::dotproduct( TwoDVector *vec )
+{
+	return _x*vec->getx() + _y*vec->gety();
+}
+
+double dlib::TwoDVector::modvecdiff( TwoDVector *vec )
+{
+	double xdiff = _x - vec->getx();
+	double ydiff = _y - vec->gety();
+	return sqrt( xdiff*xdiff + ydiff*ydiff );
+}
+
 double dlib::dIntegrator::Trapezoid(
 		double (*f)(double,void*), void *params, dlib::dIntParams *ip )
 {

@@ -3,6 +3,9 @@
 // Need this for command line output
 #include <iostream>
 
+// Need this for sqrt etc in TwoDVector
+#include <cmath>
+
 // Need these for gslc functions
 #include <gsl/gsl_complex.h>
 #include <gsl/gsl_complex_math.h>
@@ -22,6 +25,24 @@ namespace dlib
 			gsl_complex d );
 
 	struct dIntParams { double xmin; double xmax; int xpts; };
+
+	class TwoDVector
+	{
+		public :
+			TwoDVector( double x, double y );
+
+			double getx() { return _x; }
+			double gety() { return _y; }
+
+			double getmod() { return sqrt(_x*_x + _y*_y); }
+			double getmodsq() { return _x*_x + _y*_y; }
+
+			double dotproduct( TwoDVector *vec );
+			double modvecdiff( TwoDVector *vec );
+
+		private :
+			double _x, _y;
+	};
 
 	class dIntegrator
 	{
