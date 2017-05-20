@@ -14,12 +14,6 @@ void dlib::print_gslc( gsl_complex z, int precision, double zerocut )
 	// Close to 0
 	if( fabs( GSL_REAL(z) ) < zerocut && fabs( GSL_IMAG(z) ) < zerocut )
 		std::cout << "0";
-	// Imaginary
-	else if( fabs( GSL_REAL(z) ) < zerocut )
-		std::cout << std::showpos << GSL_IMAG(z) << "i";
-	// Real
-	else if( fabs( GSL_IMAG(z) ) < zerocut )
-		std::cout << GSL_REAL(z);
 	// Close to i
 	else if( fabs( GSL_REAL(z) ) < zerocut 
 			&& fabs(GSL_IMAG(z)-1.0) < zerocut )
@@ -28,6 +22,12 @@ void dlib::print_gslc( gsl_complex z, int precision, double zerocut )
 	else if( fabs( GSL_REAL(z) ) < zerocut 
 			&& fabs(GSL_IMAG(z)+1.0) < zerocut )
 		std::cout << "-i";
+	// Imaginary
+	else if( fabs( GSL_REAL(z) ) < zerocut )
+		std::cout << std::showpos << GSL_IMAG(z) << "i";
+	// Real
+	else if( fabs( GSL_IMAG(z) ) < zerocut )
+		std::cout << GSL_REAL(z);
 	// General output
 	else
 		std::cout << GSL_REAL(z) << std::showpos << GSL_IMAG(z)
