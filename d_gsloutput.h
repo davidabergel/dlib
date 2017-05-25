@@ -2,6 +2,7 @@
  * Contains output routines for gsl_complex numbers
  */
 #ifndef D_GSLOUTPUT_h
+#define D_GSLOUTPUT_h
 
 #include <gsl/gsl_complex.h>
 
