@@ -5,6 +5,36 @@ double dlib::stepsize( double xmin, double xmax, int xpts )
 	return (xmax-xmin)/(double)(xpts-1);
 }
 
+gsl_complex operator+( const gsl_complex &a, const gsl_complex &b )
+{
+	return gsl_complex_add( a, b );
+}
+
+gsl_complex operator+( const gsl_complex &a, const double &b )
+{
+	return gsl_complex_add_real( a, b );
+}
+
+gsl_complex operator+( const double &a, const gsl_complex &b )
+{
+	return gsl_complex_add_real( b, a );
+}
+
+gsl_complex operator-( const gsl_complex &a, const gsl_complex &b )
+{
+	return gsl_complex_sub( a, b );
+}
+
+gsl_complex operator-( const gsl_complex &a, const double &b )
+{
+	return gsl_complex_sub_real( a, b );
+}
+
+gsl_complex operator-( const double &a, const gsl_complex &b )
+{
+	return gsl_complex_add_real( gsl_complex_negative( b ), a );
+}
+
 gsl_complex dlib::gslc_sum( gsl_complex a, gsl_complex b )
 {
 	return gsl_complex_add( a, b );
