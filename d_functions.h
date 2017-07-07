@@ -5,6 +5,7 @@
 
 // Need this for command line output
 #include <iostream>
+#include <fstream>
 
 // Need this for sqrt etc in TwoDVector
 #include <cmath>
@@ -94,7 +95,11 @@ namespace dlib
 	class dIntegrator
 	{
 		public :
-			dIntegrator() {}
+			dIntegrator( double (*f)(double,void*) ) :
+				_f(f), _iginit(false)
+			{}
+
+			int make_integrand( void *params, dlib::dIntParams *ip );
 
 			/*!
 			 * Trapezoid uses the trapezoid rule.
@@ -102,28 +107,33 @@ namespace dlib
 			 * the parameters (must be typecast within f), and ip are
 			 * the integration parameters
 			 */
-			double Trapezoid(
-					double (*f)(double,void*), void *params,
-					dlib::dIntParams *ip );
+			double Trapezoid( dlib::dIntParams *ip );
 			/*!
 			 * Simpson uses the vanilla Simpson rule.
 			 * f is a pointer to the function to integrate, params are
 			 * the parameters (must be typecast within f), and ip are
 			 * the integration parameters
 			 */
-			double Simpson( 
-					double (*f)(double,void*), void *params, 
-					dlib::dIntParams *ip );
+			double Simpson( dlib::dIntParams *ip );
 
-			~dIntegrator() {}
+			~dIntegrator() 
+			{
+				if( _iginit == true ) delete[] _ig;
+			}
+
 
 		private :
+			double (*_f)(double,void*);
+			double *_ig;
+			bool _iginit;
 	};
 
 	class d2DIntegrator
 	{
 		public :
-			d2DIntegrator() { _iginit = false; }
+			d2DIntegrator( double (*f)(double,double,void*)  ) :
+				_f(f), _iginit(false)
+			{}
 
 			/*!
 			 * Simpson uses the vanilla 2D Simpson rule.
@@ -132,18 +142,22 @@ namespace dlib
 			 * the integration parameters. xpts and ypts must be odd
 			 * integers greater than or equal to 5.
 			 */
-			int make_integrand( double (*f)(double,double,void*),
-					void *params, dlib::d2DIntParams *ip );
+			int make_integrand( void *params, dlib::d2DIntParams *ip );
+
+			/*! \brief Once the integrand is constructed, it can be
+			 * dumped to a file with this function */
+			int print_integrand( 
+					std::ofstream *fout, dlib::d2DIntParams *ip );
 
 			double Simpson( dlib::d2DIntParams *ip );
 
 			~d2DIntegrator() 
 			{
-				if( _iginit == true )
-					delete[] _ig;
+				if( _iginit == true ) delete[] _ig;
 			}
 
 		private :
+			double (*_f)(double,double,void*);
 			double *_ig;
 			bool _iginit;
 	};

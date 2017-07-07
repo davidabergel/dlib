@@ -114,66 +114,75 @@ namespace dlib
 		return sqrt( xdiff*xdiff + ydiff*ydiff );
 	}
 
-	double dIntegrator::Trapezoid(
-			double (*f)(double,void*), void *params, dlib::dIntParams *ip )
+	int dIntegrator::make_integrand( void *params, dlib::dIntParams *ip )
 	{
-		double *ig = new double[ip->xpts];
 		double xstep = dlib::stepsize( ip->xmin, ip->xmax, ip->xpts );
 
-#pragma omp parallel for schedule(dynamic)
-		for( int jj=0; jj< ip->xpts-1; jj++ )
+		// Check if memory already allocated. If it is, delete
+		if( _iginit == true ) delete[] _ig;
+
+		// Allocate memory
+		_ig = new double[ip->xpts];
+
+		//TODO Parallelize this
+		for( int ix=0; ix< ip->xpts; ix++ )
 		{
-			double thisx = ip->xmin + (double)jj*xstep;
-			ig[jj] = f(thisx,params);
+			double thisx = ip->xmin + (double)ix*xstep;
+			_ig[ ix ] = _f( thisx, params );
 		}
 
-		double intsum = 0.5*( ig[0] + ig[ip->xpts-1] );
-		for( int jj=1; jj<ip->xpts-1; jj++ )
-			intsum += ig[jj];
+		_iginit = true;
+		
+		return 0;
+	}
 
-		delete[] ig;
+	double dIntegrator::Trapezoid( dlib::dIntParams *ip )
+	{
+		if( _iginit == false )
+		{
+			std::cout << "WARNING: _ig not populated in dIntegrator::Trapezoid. Returning 0." << std::endl;
+			return 0.0;
+		}
+
+		double xstep = dlib::stepsize( ip->xmin, ip->xmax, ip->xpts );
+
+		double intsum = 0.5*( _ig[0] + _ig[ip->xpts-1] );
+		for( int jj=1; jj<ip->xpts-1; jj++ )
+			intsum += _ig[jj];
+
 		return xstep*intsum;
 	}
 
-	double dIntegrator::Simpson( 
-			double (*f)(double,void*), void *params, dlib::dIntParams *ip )
+	double dIntegrator::Simpson( dlib::dIntParams *ip )
 	{
-		if( ip->xpts % 2 == 0 )
+		if( _iginit == false )
 		{
-			std::cout << "ERROR: xpts in dIntegrator::Simpson is "
-				<< ip->xpts << ": must be odd" << std::endl;
-			return 0;
+			std::cout << "WARNING: _ig not populated in dIntegrator::Simpson. Returning 0." << std::endl;
+			return 0.0;
 		}
 
-		double *ig = new double[ip->xpts];
 		double xstep = dlib::stepsize( ip->xmin, ip->xmax, ip->xpts );
 
-#pragma omp parallel for schedule(dynamic)
-		for( int jj=0; jj<ip->xpts; jj++ )
-		{
-			double thisx = ip->xmin + (double)jj*xstep;
-			ig[jj] = f(thisx,params);
-		}
-
-		double intsum = ig[0] + ig[ip->xpts-1] + 4*ig[ip->xpts-2];
+		double intsum = _ig[0] + _ig[ip->xpts-1] + 4*_ig[ip->xpts-2];
 		for( int jj=1; jj<ip->xpts-2; jj+=2 )
 		{
 			//std::cout << jj << " ";
-			intsum += 4.0*ig[jj];
-			intsum += 2.0*ig[jj+1];
+			intsum += 4.0*_ig[jj];
+			intsum += 2.0*_ig[jj+1];
 		}
 		//std::cout << std::endl;
-		delete[] ig;
 		return intsum*xstep/3.0;
 	}
 
-	int d2DIntegrator::make_integrand( double (*f)(double,double,void*),
+	int d2DIntegrator::make_integrand( 
 					void *params, dlib::d2DIntParams *ip )
 	{
 		double xstep = dlib::stepsize( ip->xmin, ip->xmax, ip->xpts );
 		double ystep = dlib::stepsize( ip->ymin, ip->ymax, ip->ypts );
 
 		// Allocate memory
+		if( _iginit == true ) delete[] _ig;
+
 		_ig = new double[ip->xpts*ip->ypts];
 
 		for( int iy=0; iy< ip->ypts; iy++ )
@@ -185,7 +194,7 @@ namespace dlib
 			for( int ix=0; ix< ip->xpts; ix++ )
 			{
 				double thisx = ip->xmin + (double)ix*xstep;
-				_ig[ igoffset + ix ] = f( thisx, thisy, params );
+				_ig[ igoffset + ix ] = _f( thisx, thisy, params );
 			}
 		}
 
@@ -194,6 +203,26 @@ namespace dlib
 		return 0;
 	}
 		
+	int d2DIntegrator::print_integrand( 
+			std::ofstream *fout, dlib::d2DIntParams *ip )
+	{
+		double xstep = dlib::stepsize( ip->xmin, ip->xmax, ip->xpts );
+		double ystep = dlib::stepsize( ip->ymin, ip->ymax, ip->ypts );
+
+		for( int iy = 0; iy < ip->ypts; iy++ )
+		{
+			double thisy = ip->ymin + (double)iy * ystep;
+			int iyoffset = ip->xpts*iy;
+			for( int ix = 0; ix < ip->xpts; ix++ )
+			{
+				double thisx = ip->xmin + (double)ix * xstep;
+				*fout << thisx << " " << thisy << " " 
+					<< _ig[ iyoffset + ix ] << std::endl;
+			}
+			*fout << std::endl;
+		}
+	}
+
 	double d2DIntegrator::Simpson( dlib::d2DIntParams *ip )
 	{
 		if( _iginit == false )
