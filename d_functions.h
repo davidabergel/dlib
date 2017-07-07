@@ -13,28 +13,29 @@
 #include <gsl/gsl_complex.h>
 #include <gsl/gsl_complex_math.h>
 
+/*! \brief Operators for arithmetic with gsl_complex. Moved outside
+ * the dlib namespace for visibility */
+gsl_complex operator+( const gsl_complex &a, const gsl_complex &b );
+gsl_complex operator+( const gsl_complex &a, const double &b );
+gsl_complex operator+( const double &a, const gsl_complex &b );
+
+gsl_complex operator-( const gsl_complex &a, const gsl_complex &b );
+gsl_complex operator-( const gsl_complex &a, const double &b );
+gsl_complex operator-( const double &a, const gsl_complex &b );
+
+gsl_complex operator*( const gsl_complex &a, const gsl_complex &b );
+gsl_complex operator*( const gsl_complex &a, const double &b );
+gsl_complex operator*( const double &a, const gsl_complex &b );
+
+gsl_complex operator/( const gsl_complex &a, const gsl_complex &b );
+gsl_complex operator/( const gsl_complex &a, const double &b );
+gsl_complex operator/( const double &a, const gsl_complex &b );
+
 namespace dlib
 {
 	/*! \brief stepsize returns step size for a range [xmin,xmax] with
 	 * xpts points */
 	double stepsize( double xmin, double xmax, int xpts );
-
-	/*! \brief Operators for arithmetic with gsl_complex */
-	gsl_complex operator+( const gsl_complex &a, const gsl_complex &b );
-	gsl_complex operator+( const gsl_complex &a, const double &b );
-	gsl_complex operator+( const double &a, const gsl_complex &b );
-
-	gsl_complex operator-( const gsl_complex &a, const gsl_complex &b );
-	gsl_complex operator-( const gsl_complex &a, const double &b );
-	gsl_complex operator-( const double &a, const gsl_complex &b );
-
-	gsl_complex operator*( const gsl_complex &a, const gsl_complex &b );
-	gsl_complex operator*( const gsl_complex &a, const double &b );
-	gsl_complex operator*( const double &a, const gsl_complex &b );
-
-	gsl_complex operator/( const gsl_complex &a, const gsl_complex &b );
-	gsl_complex operator/( const gsl_complex &a, const double &b );
-	gsl_complex operator/( const double &a, const gsl_complex &b );
 
 	/*! \brief The various legacy gslc_sum functions return the sum of
 	 * gsl_complex numbers */
