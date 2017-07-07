@@ -166,4 +166,99 @@ namespace dlib
 		delete[] ig;
 		return intsum*xstep/3.0;
 	}
+
+	int d2DIntegrator::make_integrand( double (*f)(double,double,void*),
+					void *params, dlib::d2DIntParams *ip )
+	{
+		double xstep = dlib::stepsize( ip->xmin, ip->xmax, ip->xpts );
+		double ystep = dlib::stepsize( ip->ymin, ip->ymax, ip->ypts );
+
+		// Allocate memory
+		_ig = new double[ip->xpts*ip->ypts];
+
+		for( int iy=0; iy< ip->ypts; iy++ )
+		{
+			double thisy = ip->ymin + (double)iy*ystep;
+			int igoffset = iy*ip->xpts;
+
+			//TODO Parallelize this
+			for( int ix=0; ix< ip->xpts; ix++ )
+			{
+				double thisx = ip->xmin + (double)ix*xstep;
+				_ig[ igoffset + ix ] = f( thisx, thisy, params );
+			}
+		}
+
+		_iginit = true;
+		
+		return 0;
+	}
+		
+	double d2DIntegrator::Simpson( dlib::d2DIntParams *ip )
+	{
+		if( _iginit == false )
+		{
+			std::cout << "WARNING: Attempting to integrate when integrand not set" 
+				<< std::endl << "   returning 0" << std::endl;
+			return 0.0;
+		}
+
+		int xpts = ip->xpts;
+		int ypts = ip->ypts;
+
+		double xstep = dlib::stepsize( ip->xmin, ip->xmax, xpts );
+		double ystep = dlib::stepsize( ip->ymin, ip->ymax, ypts );
+		// Sum integral
+		double runsum=0.0;
+
+		// Corners
+		runsum += _ig[0] + _ig[xpts-1] + _ig[xpts*(ypts-1)] + _ig[xpts*ypts-1];
+
+		// First row
+		runsum += 4.0*_ig[1];
+		for( int ix=2; ix<xpts-2; ix+=2 )
+		{
+			runsum += 2.0*_ig[ix] + 4.0*_ig[ix+1];
+		}
+
+		// Second row
+		int secoffset = xpts;
+		runsum += 4.0*_ig[secoffset] + 16.0*_ig[secoffset+1];
+		for( int ix=2; ix<xpts-2; ix+=2 )
+		{
+			runsum += 8.0*_ig[secoffset+ix] + 16.0*_ig[secoffset+ix+1];
+		}
+		runsum += 4.0*_ig[secoffset+xpts-1];
+
+
+		// Middle rows
+		for( int iy=2; iy<ypts-2; iy+=2 )
+		{
+			int thisoffset = iy*xpts;
+			// First column
+			runsum += 2.0*_ig[thisoffset] + 4.0*_ig[thisoffset+xpts];
+			// Second column
+			runsum += 8.0*_ig[thisoffset+1] + 16.0*_ig[thisoffset+xpts+1];
+			// Last column
+			runsum += 2.0*_ig[thisoffset+xpts-1]
+				+ 4.0*_ig[thisoffset+2*xpts-1];
+			for( int ix=2; ix<xpts-2; ix+=2 )
+			{
+				runsum += 4.0*_ig[thisoffset+ix] + 8.0*_ig[thisoffset+ix+1];
+				runsum += 8.0*_ig[thisoffset+xpts+ix]
+					+ 16.0*_ig[thisoffset+xpts+ix+1];
+			}
+		}
+
+		// Last row
+		int lastoffset = xpts*(ypts-1);
+		runsum += 4.0*_ig[lastoffset+1];
+		for( int ix=2; ix<xpts-2; ix+=2 )
+		{
+			runsum += 2.0*_ig[lastoffset+ix] + 4.0*_ig[lastoffset+ix+1];
+		}
+		
+		return runsum*xstep*ystep/9.0;
+	}
+
 }

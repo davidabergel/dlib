@@ -56,6 +56,13 @@ namespace dlib
 	// TODO Convert this to a class?
 	struct dIntParams { double xmin; double xmax; int xpts; };
 
+	/*! \brief A structure containing integration ranges and number of
+	 * points for 2D integration to be used with the d2DIntegrator class
+	 */
+	// TODO Covert this to a class?
+	struct d2DIntParams { double xmin; double xmax; int xpts;
+		double ymin; double ymax; int ypts; };
+
 	/*!  \brief A class representing two dimensional real-valued
 	 * vectors.  */
 	class TwoDVector
@@ -112,6 +119,35 @@ namespace dlib
 
 		private :
 	};
+
+	class d2DIntegrator
+	{
+		public :
+			d2DIntegrator() { _iginit = false; }
+
+			/*!
+			 * Simpson uses the vanilla 2D Simpson rule.
+			 * f is a pointer to the function to integrate, params are
+			 * the parameters (must be typecast within f), and ip are
+			 * the integration parameters. xpts and ypts must be odd
+			 * integers greater than or equal to 5.
+			 */
+			int make_integrand( double (*f)(double,double,void*),
+					void *params, dlib::d2DIntParams *ip );
+
+			double Simpson( dlib::d2DIntParams *ip );
+
+			~d2DIntegrator() 
+			{
+				if( _iginit == true )
+					delete[] _ig;
+			}
+
+		private :
+			double *_ig;
+			bool _iginit;
+	};
+
 }
 
 #endif
