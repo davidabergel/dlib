@@ -15,6 +15,8 @@ overloaded aritmetic operators for gsl_complex
 gslc_sum and gslc_prod: sums and products of gsl_complex numbers
 dIntegrator: A class for integrating functions that currently contains
 trapezium and Simpson methods.
+d2DIntegrator: A class for integrating functions of two variables.
+Currently contains Simpson method.
 TwoDVector: A class for two-dimensional real vectors.
 
 
