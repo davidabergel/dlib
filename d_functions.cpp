@@ -124,7 +124,7 @@ namespace dlib
 		// Allocate memory
 		_ig = new double[ip->xpts];
 
-		//TODO Parallelize this
+#pragma omp parallel for
 		for( int ix=0; ix< ip->xpts; ix++ )
 		{
 			double thisx = ip->xmin + (double)ix*xstep;
@@ -190,7 +190,7 @@ namespace dlib
 			double thisy = ip->ymin + (double)iy*ystep;
 			int igoffset = iy*ip->xpts;
 
-			//TODO Parallelize this
+#pragma omp parallel for
 			for( int ix=0; ix< ip->xpts; ix++ )
 			{
 				double thisx = ip->xmin + (double)ix*xstep;
