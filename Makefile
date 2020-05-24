@@ -18,6 +18,7 @@ libd_functions.a : ${OBJECTS}
 		ar -rsv libd_functions.a $$stub ; \
 	done
 
+# Should add something here to check if destinations exist
 install : libd_functions.a ${HEADERS}
 	cp libd_functions.a ${PREFIX}/lib
 	cp d_gsloutput.h ${PREFIX}/include
